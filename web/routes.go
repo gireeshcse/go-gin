@@ -17,6 +17,7 @@ var userDB = make(map[string]userStructure)
 func SetupRouter() *gin.Engine {
 
 	r := gin.Default()
+	r.Use(Logger())
 
 	r.GET("/hello", func(c *gin.Context) {
 		c.String(http.StatusOK, "Hello World")
