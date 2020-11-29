@@ -1,0 +1,32 @@
+{{  template "header.html" }}
+
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Username</th>
+        <th scope="col">Email</th>
+        <th scope="col">Profile URL</th>
+        <th scope="col">Age</th>
+        <th scope="col">Address</th>
+      </tr>
+    </thead>
+    <tbody>
+        {{range .users}}
+        <tr>
+            <th scope="row">1</th>
+            <td>{{.Name}} </td>
+            <td>{{.Username}} </td>
+            <td>{{.Email}} </td>
+            <td>{{.ProfileURL}} </td>
+            <td>{{.Age}} </td>
+            <td>{{.Address}} </td>
+        </tr>
+        {{end}}
+
+    </tbody>
+  </table>
+
+
+{{ template "footer.html" }}

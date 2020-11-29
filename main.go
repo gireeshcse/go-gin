@@ -25,20 +25,35 @@ func main() {
 	// r := web.SetupRouter()
 	setupLogOutput()
 	server := gin.New()
+
+	server.Static("/css", "./templates/css")
+
+	server.LoadHTMLGlob("templates/*.html")
+
 	server.Use(gin.Recovery(), middlewares.Logger(), middlewares.BasicAuth())
 
-	server.GET("/users", func(ctx *gin.Context) {
-		ctx.JSON(200, userController.FindAll())
-	})
+	apiRoutes := server.Group("/api")
+	{
 
-	server.POST("/users", func(ctx *gin.Context) {
-		user, err := userController.Save(ctx)
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		} else {
-			ctx.JSON(200, user)
-		}
-	})
+		apiRoutes.GET("/users", func(ctx *gin.Context) {
+			ctx.JSON(200, userController.FindAll())
+		})
+
+		apiRoutes.POST("/users", func(ctx *gin.Context) {
+			user, err := userController.Save(ctx)
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			} else {
+				ctx.JSON(200, user)
+			}
+		})
+
+	}
+
+	viewRoutes := server.Group("/view")
+	{
+		viewRoutes.GET("/users", userController.ShowAll)
+	}
 
 	server.Run(":8080")
 }

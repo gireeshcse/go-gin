@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gireeshcse/go-gin/entity"
 	"github.com/gireeshcse/go-gin/service"
@@ -14,6 +16,7 @@ var validate *validator.Validate
 type UserController interface {
 	FindAll() []entity.User
 	Save(context *gin.Context) (entity.User, error)
+	ShowAll(context *gin.Context)
 }
 
 type controller struct {
@@ -49,4 +52,13 @@ func (c *controller) Save(ctx *gin.Context) (entity.User, error) {
 	c.service.Save(user)
 	// return user
 	return user, nil
+}
+
+func (c *controller) ShowAll(ctx *gin.Context) {
+	users := c.service.FindAll()
+	data := gin.H{
+		"title": "Users Page",
+		"users": users,
+	}
+	ctx.HTML(http.StatusOK, "index.html", data)
 }
