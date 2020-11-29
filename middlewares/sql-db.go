@@ -27,7 +27,7 @@ func MySQLDB() gin.HandlerFunc {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unable to connect to database"})
 			} else {
 
-				c.Set("db", database)
+				c.Set("db", db)
 				c.Next()
 				database.Close()
 			}

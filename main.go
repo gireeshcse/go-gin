@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/gireeshcse/go-gin/model"
+	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gireeshcse/go-gin/config"
@@ -81,6 +82,33 @@ func main() {
 		{
 			apiDBAuthRoutes.GET("/test", func(ctx *gin.Context) {
 				ctx.JSON(200, gin.H{"db": "Connection to db is ok"})
+			})
+			// curl http://localhost:8080/api/db/users
+			apiDBAuthRoutes.GET("/users", func(ctx *gin.Context) {
+				db, _ := ctx.Get("db")
+				database := db.(*gorm.DB)
+				rows := map[string]interface{}{}
+				database.Table("users").Find(&rows)
+				ctx.JSON(200, gin.H{"db": rows})
+			})
+			// curl http://localhost:8080/api/db/migrate
+			apiDBAuthRoutes.GET("/migrate", func(ctx *gin.Context) {
+				db, _ := ctx.Get("db")
+				database := db.(*gorm.DB)
+				database.AutoMigrate(&model.User{})
+				database.AutoMigrate(&model.Company{})
+
+				ctx.JSON(200, gin.H{"db": "migration success"})
+			})
+
+			apiDBAuthRoutes.GET("/create", func(ctx *gin.Context) {
+				db, _ := ctx.Get("db")
+				database := db.(*gorm.DB)
+				company := model.Company{Name: "Google", City: "California", State: "California", Country: "USA"}
+				database.Create(&company)
+				user := model.User{Name: "Ram", Username: "ram", Email: "ram@test.com", Password: "ram123", CompanyID: uint64(company.ID)}
+				database.Create(&user)
+				ctx.JSON(200, gin.H{"db": user})
 			})
 		}
 
