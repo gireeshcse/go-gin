@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -31,7 +32,12 @@ func main() {
 	})
 
 	server.POST("/users", func(ctx *gin.Context) {
-		ctx.JSON(200, userController.Save(ctx))
+		user, err := userController.Save(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		} else {
+			ctx.JSON(200, user)
+		}
 	})
 
 	server.Run(":8080")
