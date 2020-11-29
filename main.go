@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gireeshcse/go-gin/model"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gireeshcse/go-gin/config"
 	"github.com/gireeshcse/go-gin/controller"
@@ -27,6 +29,7 @@ func main() {
 	// r := web.SetupRouter()
 	setupLogOutput()
 	server := gin.New()
+	model.InitiateApp()
 
 	server.Static("/css", "./templates/css")
 

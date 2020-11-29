@@ -24,6 +24,10 @@ go 1.15
 
 ```
 go get -u github.com/gin-gonic/gin
+go get github.com/dgrijalva/jwt-go
+go get -u gorm.io/gorm
+go get -u gorm.io/driver/mysql
+go get -v golang.org/x/crypto/argon2
 
 ```
 ##### Build and install the program
@@ -69,3 +73,12 @@ func SetupRouter() *gin.Engine {
 cd web
 go build
 ```
+
+### Important
+
+[For Logging Request Header Debugging](https://github.com/tpkeeper/gin-dump)
+
+
+#### Credits 
+
+[pragmaticreviews](https://pragmaticreviews.com)
