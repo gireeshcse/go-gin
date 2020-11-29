@@ -7,6 +7,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gireeshcse/go-gin/config"
+
 	"golang.org/x/crypto/argon2"
 )
 
@@ -99,4 +102,17 @@ func ComparePassword(password, hash string) (bool, error) {
 	comparisonHash := argon2.IDKey([]byte(password), salt, c.time, c.memory, c.threads, c.keyLen)
 
 	return (subtle.ConstantTimeCompare(decodedHash, comparisonHash) == 1), nil
+}
+
+// ValidateToken to validate the json token
+func ValidateToken(tokenString string) (*jwt.Token, error) {
+	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// signing method validation
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method %v", token.Header["alg"])
+		}
+
+		// return the secret signing key
+		return []byte(config.SECRET), nil
+	})
 }

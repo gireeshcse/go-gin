@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gireeshcse/go-gin/config"
 	"github.com/gireeshcse/go-gin/controller"
 	"github.com/gireeshcse/go-gin/middlewares"
 	"github.com/gireeshcse/go-gin/service"
@@ -14,6 +15,7 @@ import (
 var (
 	userService    service.UserService       = service.New()
 	userController controller.UserController = controller.New(userService)
+	jwtService     service.JWTService        = service.NewJWTService(config.ISSUER, config.SECRET, config.EXPIRATIONTIME)
 )
 
 func setupLogOutput() {
@@ -56,9 +58,20 @@ func main() {
 			if err != nil {
 				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			} else {
-				ctx.JSON(200, user)
+				var roles = []string{"Basic", "Authenticated"}
+				token := jwtService.GenerateToken(user.Username, roles)
+				ctx.JSON(200, gin.H{"user": user, "token": token})
 			}
 		})
+
+		apiJWTAuthRoutes := apiRoutes.Group("/auth")
+		apiJWTAuthRoutes.Use(middlewares.JWTAuth())
+		{
+			apiJWTAuthRoutes.GET("/user", func(ctx *gin.Context) {
+				token, _ := ctx.Get("token")
+				ctx.JSON(200, gin.H{"token": token})
+			})
+		}
 
 	}
 
