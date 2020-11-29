@@ -24,7 +24,7 @@ func main() {
 	// r := web.SetupRouter()
 	setupLogOutput()
 	server := gin.New()
-	server.Use(gin.Recovery(), middlewares.Logger())
+	server.Use(gin.Recovery(), middlewares.Logger(), middlewares.BasicAuth())
 
 	server.GET("/users", func(ctx *gin.Context) {
 		ctx.JSON(200, userController.FindAll())
