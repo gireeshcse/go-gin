@@ -30,17 +30,29 @@ func main() {
 
 	server.LoadHTMLGlob("templates/*.html")
 
-	server.Use(gin.Recovery(), middlewares.Logger(), middlewares.BasicAuth())
+	server.Use(gin.Recovery(), middlewares.Logger())
 
 	apiRoutes := server.Group("/api")
 	{
-
-		apiRoutes.GET("/users", func(ctx *gin.Context) {
-			ctx.JSON(200, userController.FindAll())
-		})
+		apiAuthRoutes := apiRoutes.Group("/admin")
+		apiAuthRoutes.Use(middlewares.BasicAuth())
+		{
+			apiAuthRoutes.GET("/users", func(ctx *gin.Context) {
+				ctx.JSON(200, userController.FindAll())
+			})
+		}
 
 		apiRoutes.POST("/users", func(ctx *gin.Context) {
 			user, err := userController.Save(ctx)
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			} else {
+				ctx.JSON(200, user)
+			}
+		})
+
+		apiRoutes.POST("/login", func(ctx *gin.Context) {
+			user, err := userController.Login(ctx)
 			if err != nil {
 				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			} else {
