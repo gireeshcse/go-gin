@@ -76,6 +76,14 @@ func main() {
 			})
 		}
 
+		apiDBAuthRoutes := apiRoutes.Group("/db")
+		apiDBAuthRoutes.Use(middlewares.MySQLDB())
+		{
+			apiDBAuthRoutes.GET("/test", func(ctx *gin.Context) {
+				ctx.JSON(200, gin.H{"db": "Connection to db is ok"})
+			})
+		}
+
 	}
 
 	viewRoutes := server.Group("/view")

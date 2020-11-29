@@ -74,6 +74,14 @@ cd web
 go build
 ```
 
+#### Creating Database and User 
+
+```
+CREATE DATABASE go_app;
+
+GRANT ALL PRIVILEGES ON go_app.* TO 'go_app_user'@'localhost' IDENTIFIED BY 'app123' WITH GRANT OPTION;
+```
+
 ### Important
 
 [For Logging Request Header Debugging](https://github.com/tpkeeper/gin-dump)
